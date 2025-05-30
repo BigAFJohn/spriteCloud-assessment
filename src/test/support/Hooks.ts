@@ -36,17 +36,13 @@ Before(async function (this: CustomWorld, scenario) {
   // ----------------------
   const apiBaseUrl = process.env.API_BASE_URL || 'https://reqres.in';
   if (!process.env.API_BASE_URL) {
-    Log.warn(`API_BASE_URL not provided, falling back to ${apiBaseUrl}`);
+    Log.warn(`Missing API_BASE_URL; falling back to ${apiBaseUrl}`);
   }
-
   const apiKey = process.env.API_KEY;
-  const requestOptions: { baseURL: string; extraHTTPHeaders?: Record<string, string> } = {
-    baseURL: apiBaseUrl,
-  };
+  const requestOptions: { baseURL: string; extraHTTPHeaders?: Record<string, string> } = { baseURL: apiBaseUrl };
   if (apiKey) {
     requestOptions.extraHTTPHeaders = { 'x-api-key': apiKey };
   }
-
   this.apiContext = await request.newContext(requestOptions);
   this.apiBaseUrl = apiBaseUrl;
   Log.info(`API Context created with base URL: ${this.apiBaseUrl}`);
@@ -54,32 +50,26 @@ Before(async function (this: CustomWorld, scenario) {
   // ----------------------
   // UI Context Setup
   // ----------------------
-  const isUiTest =
-    process.env.TEST_ENV === 'ui' ||
-    scenario.pickle.tags.some((t) => t.name === '@ui-test');
-
+  const isUiTest = testType === 'ui' || scenario.pickle.tags.some((t) => t.name === '@ui-test');
   if (isUiTest) {
-    Log.info('Launching a NEW browser instance and context for UI test...');
-
+    Log.info('Launching a NEW browser instance for UI test...');
     const uiBaseUrl = process.env.BASE_URL || 'https://www.saucedemo.com';
     if (!process.env.BASE_URL) {
-      Log.warn(`BASE_URL not provided, falling back to ${uiBaseUrl}`);
+      Log.warn(`Missing BASE_URL; falling back to ${uiBaseUrl}`);
     }
-
     const browserInstance: Browser = await chromium.launch();
     this.context = await browserInstance.newContext({
       baseURL: uiBaseUrl,
       recordVideo: process.env.RECORD_VIDEO === 'true' ? { dir: videoDir } : undefined,
     });
-
     this.page = await this.context.newPage();
+    // page-specific helpers
     this.loginPage = new LoginPage(this.page);
     this.productListPage = new ProductListPage(this.page);
     this.checkoutInformationPage = new CheckoutInformationPage(this.page);
     this.checkoutConfirmationPage = new CheckoutConfirmationPage(this.page);
     this.checkoutCompletePage = new CheckoutCompletePage(this.page);
     this.cartPage = new CartPage(this.page);
-
     Log.info('Browser context and page created for UI test.');
   } else {
     Log.info('Skipping browser context launch for API test.');
@@ -102,15 +92,12 @@ After(async function (this: CustomWorld, scenario) {
         if (!this.page.isClosed()) {
           await this.page.screenshot({ path: screenshotPath });
           this.attach(fs.readFileSync(screenshotPath), 'image/png');
-          Log.info(`Screenshot saved and attached: ${screenshotPath}`);
-        } else {
-          Log.info(`Page already closed, skipping screenshot for "${scenarioName}".`);
+          Log.info(`Screenshot saved: ${screenshotPath}`);
         }
       } catch (e) {
-        Log.error(`Failed to take screenshot for scenario "${scenarioName}": ${e}`);
+        Log.error(`Failed to take screenshot for ${scenarioName}: ${e}`);
       }
     }
-
     if (process.env.RECORD_VIDEO === 'true') {
       const video = this.page.video();
       if (video) {
@@ -118,26 +105,19 @@ After(async function (this: CustomWorld, scenario) {
           fse.ensureDirSync(videoDir);
           const finalVideoPath = path.join(videoDir, `${scenarioName}.webm`);
           await video.saveAs(finalVideoPath);
-          Log.info(`🎥 Video saved: ${finalVideoPath}`);
+          Log.info(`Video saved: ${finalVideoPath}`);
         } catch (e) {
-          Log.error(`Failed to save video for scenario "${scenarioName}": ${e}`);
+          Log.error(`Failed to save video for ${scenarioName}: ${e}`);
         }
       }
     }
-
-    if (!this.page.isClosed()) {
-      await this.page.close();
-    }
-    if (this.context) {
-      await this.context.close();
-    }
+    if (!this.page.isClosed()) await this.page.close();
+    if (this.context) await this.context.close();
     await this.context?.browser()?.close();
   }
-
   if (this.apiContext) {
     await this.apiContext.dispose();
     Log.info('API context disposed.');
   }
-
   Log.testEnd(scenarioName, status);
 });
