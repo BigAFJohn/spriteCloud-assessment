@@ -159,6 +159,7 @@ The key directories and files are organized as follows:
 ├── playwright.config.ts         # Playwright configuration (timeouts, reporters, browser settings)
 ├── package.json                 # Project dependencies and scripts
 └── tsconfig.json                # TypeScript configuration
+
 ## 5. CI/CD Pipeline (GitHub Actions)
 
 The project includes a GitHub Actions workflow that automates the testing process.
