@@ -13,12 +13,10 @@ import path from 'path';
 import Log from '../utils/Logger';
 import dotenv from 'dotenv';
 
-
 dotenv.config({
   path: process.env.CI ? './.env.ci' : (process.env.TEST_ENV ? `.env.${process.env.TEST_ENV}` : '.env'),
-  override: !!process.env.TEST_ENV, 
+  override: !!process.env.TEST_ENV,
 });
-
 
 // ====================================================================
 // GLOBAL CONFIGURATION
@@ -26,7 +24,7 @@ dotenv.config({
 
 setDefaultTimeout(30 * 1000);
 
-const testType = process.env.TEST_ENV || 'ui'; 
+const testType = process.env.TEST_ENV || 'ui';
 const screenshotDir = `test-results/${testType}/screenshots`;
 const videoDir = `test-results/${testType}/videos`;
 
@@ -38,23 +36,28 @@ Before(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name;
   Log.testBegin(scenarioName);
 
-  
+  // --- DEBUG LOGS (KEEP THESE) ---
   Log.info(`DEBUG_HOOKS: Before hook started for scenario: "${scenarioName}"`);
   Log.info(`DEBUG_HOOKS: process.env.API_BASE_URL = '${process.env.API_BASE_URL}'`);
   Log.info(`DEBUG_HOOKS: process.env.API_KEY = '${process.env.API_KEY}'`);
   Log.info(`DEBUG_HOOKS: process.env.BASE_URL = '${process.env.BASE_URL}'`);
-
+  Log.info(`DEBUG_HOOKS: process.env.CI = '${process.env.CI}'`); // Added this to check CI flag
+  // --- END DEBUG LOGS ---
 
   const apiBaseUrl = process.env.API_BASE_URL;
   const apiKey = process.env.API_KEY;
 
-  if (!apiBaseUrl) {
-    throw new Error('Environment variable API_BASE_URL is not set. Please ensure your .env file is correctly configured or provide it via command line.');
-  }
+  // --- TEMPORARILY COMMENT THIS BLOCK OUT ---
+  // if (!apiBaseUrl) {
+  //   throw new Error('Environment variable API_BASE_URL is not set. Please ensure your .env file is correctly configured or provide it via command line.');
+  // }
+  // --- END TEMPORARY COMMENT OUT ---
 
+  // --- FIX FOR TYPESCRIPT ERROR (MODIFIED LINE) ---
   const requestOptions: { baseURL: string; extraHTTPHeaders?: { [key: string]: string }; } = {
-    baseURL: apiBaseUrl,
+    baseURL: apiBaseUrl || '', // Provide an empty string fallback
   };
+  // --- END FIX ---
 
   if (apiKey) {
     requestOptions.extraHTTPHeaders = {
@@ -62,6 +65,8 @@ Before(async function (this: CustomWorld, scenario) {
     };
   }
 
+  // This line might still throw a Playwright error if baseURL is truly empty,
+  // but it will allow the code to compile and the debug logs to print.
   this.apiContext = await request.newContext(requestOptions);
   this.apiBaseUrl = apiBaseUrl;
   Log.info(`API Context created with base URL: ${this.apiBaseUrl}`);
