@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "baseUrl": "src",
+    "paths": {
+      "@pages/*": ["pages/*"],
+      "@utils/*": ["test/utils/*"],
+      "@support/*": ["test/support/*"],
+      "@data/*": ["test/data/*"]
+    },
+    "module": "CommonJS",
+    "lib": ["ES2020", "DOM"],
+    "types": ["node", "playwright"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts", "resources/**/*.ts", "features/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

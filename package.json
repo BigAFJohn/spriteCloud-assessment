@@ -1,0 +1,33 @@
+{
+  "name": "playwright-cucumber-project",
+  "version": "1.0.0",
+  "description": "spriteCloud Technical assessment project using Playwright and Cucumber",
+  "author": "John Ige",
+  "scripts": {
+  "test:api": "dotenv -e .env -- cucumber-js --profile api --format junit:./reports/api-report.xml",
+  "test:ui": "dotenv -e .env -- cucumber-js --profile ui --format junit:./reports/ui-report.xml",
+  "test": "dotenv -e .env -- cucumber-js --profile default --format junit:./reports/report.xml"
+},
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
+    "@playwright/test": "^1.52.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.15.23",
+    "allure-commandline": "^2.34.0",
+    "allure-cucumberjs": "^3.2.2",
+    "dotenv": "^16.5.0",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "^9.27.0",
+    "fs-extra": "^11.3.0",
+    "multiple-cucumber-html-reporter": "^3.9.2",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3",
+    "@shelex/cucumberjs-allure-plugin": "^2.0.0",
+    "winston": "^3.17.0"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.8.0"
+  }
+}

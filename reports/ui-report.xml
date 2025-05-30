@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<testsuite name="Cucumber" time="4.457" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-05-30T08:54:03.973Z">
+  <testcase classname="Checkout Flow" name="Validate successful checkout with multiple products - #1.1" time="1.188">
+    <system-out><![CDATA[Given the user access to Sauce Demo.........................................passed
+And the user logs in with STANDARD_USER credentials.........................passed
+When the user add first 2 products to cart..................................passed
+And click on the cart icon..................................................passed
+And the user click on checkout button.......................................passed
+And the user fills the personal information form with valid details.........passed
+When the user click on finish button........................................passed
+Then the purchase was completed with a success message and green check......passed]]></system-out>
+  </testcase>
+  <testcase classname="Login Functionality" name="Validate error messages for invalid login attempts - #1.1" time="0.49">
+    <system-out><![CDATA[Given the user access to Sauce Demo.........................................passed
+When the user attempts to log in with "NON_EXISTING_USER" credentials.......passed
+Then 2 error icons and the error message for "NON_EXISTING_USER" should be displayed..passed]]></system-out>
+  </testcase>
+  <testcase classname="Login Functionality" name="Validate error messages for invalid login attempts - #1.2" time="0.458">
+    <system-out><![CDATA[Given the user access to Sauce Demo.........................................passed
+When the user attempts to log in with "BLOCKED_USER" credentials............passed
+Then 2 error icons and the error message for "BLOCKED_USER" should be displayed..passed]]></system-out>
+  </testcase>
+  <testcase classname="Sort Items" name="Validate Z-A sorting by item name" time="0.515">
+    <system-out><![CDATA[Given the user access to Sauce Demo.........................................passed
+And the user logs in with STANDARD_USER credentials.........................passed
+When the user selects sorting option "Name (Z to A)"........................passed
+Then the products should be sorted in descending alphabetical order.........passed]]></system-out>
+  </testcase>
+</testsuite>

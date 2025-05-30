@@ -1,0 +1,100 @@
+
+name: E2E Tests CI/CD (UI & API)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Job for UI Tests
+  ui_tests:
+    name: Run UI Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+    
+      - name: Set UI Environment Variables
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }} 
+          RECORD_VIDEO: 'false' 
+          HEADLESS: 'true' 
+          
+        run: echo "UI Test Environment Variables Set" 
+
+      - name: Run Cucumber UI Tests
+        run: npm run test:ui 
+
+      - name: Upload UI JUnit XML Results Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-junit-test-results
+          path: test-results/junit/results-ui.xml
+
+      - name: Publish UI Test Results Summary to GitHub Actions
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: 'test-results/junit/results-ui.xml'
+          name: UI Test Results
+
+  # Job for API Tests
+  api_tests:
+    name: Run API Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install NPM Dependencies
+        run: npm ci
+
+      
+      - name: Set API Environment Variables
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }} 
+          API_KEY: ${{ secrets.API_KEY }} 
+          
+        run: echo "API Test Environment Variables Set" 
+
+      - name: Run Cucumber API Tests
+        run: npm run test:api 
+
+      - name: Upload API JUnit XML Results Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-junit-test-results
+          path: test-results/junit/results-api.xml
+
+      - name: Publish API Test Results Summary to GitHub Actions
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: 'test-results/junit/results-api.xml'
+          name: API Test Results
