@@ -4,10 +4,10 @@
   "description": "spriteCloud Technical assessment project using Playwright and Cucumber",
   "author": "John Ige",
   "scripts": {
-  "test:api": "dotenv -e .env -- cucumber-js --profile api --format junit:./reports/api-report.xml",
-  "test:ui": "dotenv -e .env -- cucumber-js --profile ui --format junit:./reports/ui-report.xml",
-  "test": "dotenv -e .env -- cucumber-js --profile default --format junit:./reports/report.xml"
-},
+    "test:api": "cucumber-js --profile api --format junit:./reports/api-report.xml",
+    "test:ui": "cucumber-js --profile ui --format junit:./reports/ui-report.xml",
+    "test": "cucumber-js --profile default --format junit:./reports/report.xml"
+  },
   "devDependencies": {
     "@cucumber/cucumber": "^11.3.0",
     "@playwright/test": "^1.52.0",
