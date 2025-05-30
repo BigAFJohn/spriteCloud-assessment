@@ -2,21 +2,25 @@ name: E2E Tests CI/CD (UI & API)
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  # Job for UI Tests (no changes here)
+  # -----------------------------
+  # UI Tests
+  # -----------------------------
   ui_tests:
     name: Run UI Tests
     runs-on: ubuntu-latest
+
+    
     env:
-      BASE_URL:   ${{ secrets.BASE_URL }}
+      BASE_URL:    ${{ secrets.BASE_URL }}
       RECORD_VIDEO: 'false'
       HEADLESS:     'true'
+      CI:           'true'
+      TEST_ENV:     'ui'
 
     steps:
       - name: Checkout Repository
@@ -32,6 +36,10 @@ jobs:
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
+      
+      - name: Print BASE_URL (masked)
+        run: echo "BASE_URL=$BASE_URL"
 
       - name: Run Cucumber UI Tests
         run: npm run test:ui
@@ -50,14 +58,18 @@ jobs:
           files: test-results/junit/results-ui.xml
           name: UI Test Results
 
-  # Job for API Tests (updated)
+  # -----------------------------
+  # API Tests
+  # -----------------------------
   api_tests:
     name: Run API Tests
     runs-on: ubuntu-latest
+
     env:
       API_BASE_URL: ${{ secrets.API_BASE_URL }}
       API_KEY:       ${{ secrets.API_KEY }}
       CI:            'true'
+      TEST_ENV:      'api'
 
     steps:
       - name: Checkout Repository
@@ -70,6 +82,10 @@ jobs:
 
       - name: Install NPM Dependencies
         run: npm ci
+
+      
+      - name: Print API Base URL (masked)
+        run: echo "API_BASE_URL=$API_BASE_URL"
 
       - name: Run Cucumber API Tests
         run: npm run test:api

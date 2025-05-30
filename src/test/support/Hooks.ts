@@ -32,6 +32,10 @@ const videoDir = `test-results/${testType}/videos`;
 Before(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name;
   Log.testBegin(scenarioName);
+  Log.info(`API_BASE_URL in hook = ${process.env.API_BASE_URL}`);
+  if (!process.env.API_BASE_URL) {
+    throw new Error('Environment variable API_BASE_URL is not set');
+  }
 
   const apiBaseUrl = process.env.API_BASE_URL;
   if (!apiBaseUrl) {
