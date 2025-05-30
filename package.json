@@ -13,8 +13,6 @@
     "@playwright/test": "^1.52.0",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.15.23",
-    "allure-commandline": "^2.34.0",
-    "allure-cucumberjs": "^3.2.2",
     "dotenv": "^16.5.0",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.27.0",
@@ -24,7 +22,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3",
-    "@shelex/cucumberjs-allure-plugin": "^2.0.0",
     "winston": "^3.17.0"
   },
   "dependencies": {
