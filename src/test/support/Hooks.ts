@@ -36,12 +36,19 @@ Before(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name;
   Log.testBegin(scenarioName);
 
+  // --- ADD THESE DEBUG LOGS ---
+  Log.info(`DEBUG_HOOKS: Before hook started for scenario: "${scenarioName}"`);
+  Log.info(`DEBUG_HOOKS: process.env.API_BASE_URL = '${process.env.API_BASE_URL}'`);
+  Log.info(`DEBUG_HOOKS: process.env.API_KEY = '${process.env.API_KEY}'`);
+  Log.info(`DEBUG_HOOKS: process.env.BASE_URL = '${process.env.BASE_URL}'`);
+  // --- END DEBUG LOGS ---
+
   const apiBaseUrl = process.env.API_BASE_URL;
+  const apiKey = process.env.API_KEY;
+
   if (!apiBaseUrl) {
     throw new Error('Environment variable API_BASE_URL is not set. Please ensure your .env file is correctly configured or provide it via command line.');
   }
-
-  const apiKey = process.env.API_KEY;
 
   const requestOptions: { baseURL: string; extraHTTPHeaders?: { [key: string]: string }; } = {
     baseURL: apiBaseUrl,
@@ -67,12 +74,12 @@ Before(async function (this: CustomWorld, scenario) {
       throw new Error('Environment variable BASE_URL is not set for UI tests. Please ensure your .env file is correctly configured or provide it via command line.');
     }
 
-    const browserInstance: Browser = await chromium.launch(); 
+    const browserInstance: Browser = await chromium.launch();
 
     this.context = await browserInstance.newContext({
-      baseURL: uiBaseUrl, 
+      baseURL: uiBaseUrl,
       recordVideo: process.env.RECORD_VIDEO === 'true' ? { dir: videoDir } : undefined,
-      
+
     });
 
     this.page = await this.context.newPage();
@@ -102,7 +109,7 @@ After(async function (this: CustomWorld, scenario) {
 
   if (this.page) {
     if (isFailed) {
-      fse.ensureDirSync(screenshotDir); 
+      fse.ensureDirSync(screenshotDir);
       const screenshotPath = path.join(screenshotDir, `${scenarioName}.png`);
       try {
         if (!this.page.isClosed()) {
@@ -143,7 +150,7 @@ After(async function (this: CustomWorld, scenario) {
   }
 
   if (this.apiContext) {
-    await this.apiContext.dispose(); 
+    await this.apiContext.dispose();
     Log.info('API context disposed.');
   }
 
