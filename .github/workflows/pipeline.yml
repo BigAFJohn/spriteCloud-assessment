@@ -57,7 +57,7 @@ jobs:
   api_tests:
     name: Run API Tests
     runs-on: ubuntu-latest
-    env: 
+    env: # Environment variables defined at the job level, available to all steps below
       API_BASE_URL: ${{ secrets.API_BASE_URL }}
       API_KEY: ${{ secrets.API_KEY }}
 
@@ -73,10 +73,15 @@ jobs:
       - name: Install NPM Dependencies
         run: npm ci
 
-      - name: Run Cucumber API Tests (with debug echo)
+      - name: Run Cucumber API Tests (with debug echo and explicit env) 
+        
+        env: 
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+        
         run: | 
-          echo "DEBUG: API_BASE_URL from shell: $API_BASE_URL" # Debugging line
-          echo "DEBUG: API_KEY from shell: $API_KEY"           # Debugging line for API_KEY
+          echo "DEBUG: API_BASE_URL from shell (in step): $API_BASE_URL"
+          echo "DEBUG: API_KEY from shell (in step): $API_KEY"
           npm run test:api
 
       - name: Upload API JUnit XML Results Artifact
