@@ -4,26 +4,26 @@
   "description": "spriteCloud Technical assessment project using Playwright and Cucumber",
   "author": "John Ige",
   "scripts": {
-    "test:ui": "cucumber-js --profile ui --format junit:./test-results/junit/results-ui.xml",
-    "test:api": "cucumber-js --profile api --format pretty --format junit:./test-results/junit/results-api.xml",
-    "lint": "eslint . --ext .ts",
+    "test:ui":  "cucumber-js --profile ui  --format junit:./test-results/junit/results-ui.xml",
+    "test:api": "cucumber-js --profile api --format progress-bar --format junit:./test-results/junit/results-api.xml",
+    "lint":     "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^11.3.0",
-    "@playwright/test": "^1.52.0",
-    "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.15.23",
-    "dotenv": "^16.5.0",
-    "dotenv-cli": "^8.0.0",
-    "eslint": "^9.27.0",
-    "fs-extra": "^11.3.0",
+    "@cucumber/cucumber":        "^11.3.0",
+    "@playwright/test":          "^1.52.0",
+    "@types/fs-extra":           "^11.0.4",
+    "@types/node":               "^22.15.23",
+    "dotenv":                    "^16.5.0",
+    "dotenv-cli":                "^8.0.0",
+    "eslint":                    "^9.27.0",
+    "fs-extra":                  "^11.3.0",
     "multiple-cucumber-html-reporter": "^3.9.2",
-    "prettier": "^3.5.3",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.8.3",
-    "winston": "^3.17.0"
+    "prettier":                  "^3.5.3",
+    "ts-node":                   "^10.9.2",
+    "tsconfig-paths":            "^4.2.0",
+    "typescript":                "^5.8.3",
+    "winston":                   "^3.17.0"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0"
