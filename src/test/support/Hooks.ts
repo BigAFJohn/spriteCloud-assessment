@@ -10,7 +10,7 @@ import CartPage from '@pages/CartPage';
 import fs from 'fs';
 import fse from 'fs-extra';
 import path from 'path';
-import Log from '../utils/Logger';
+// import Log from '../utils/Logger'; // You can comment this out or keep it, but we won't use it for these specific debug lines
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -34,30 +34,29 @@ const videoDir = `test-results/${testType}/videos`;
 
 Before(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name;
-  Log.testBegin(scenarioName);
+  // If you want to keep the custom logger for other info, you can do: Log.testBegin(scenarioName);
+  // Otherwise, just remove it or comment it out for now.
 
-  // --- DEBUG LOGS (KEEP THESE) ---
-  Log.info(`DEBUG_HOOKS: Before hook started for scenario: "${scenarioName}"`);
-  Log.info(`DEBUG_HOOKS: process.env.API_BASE_URL = '${process.env.API_BASE_URL}'`);
-  Log.info(`DEBUG_HOOKS: process.env.API_KEY = '${process.env.API_KEY}'`);
-  Log.info(`DEBUG_HOOKS: process.env.BASE_URL = '${process.env.BASE_URL}'`);
-  Log.info(`DEBUG_HOOKS: process.env.CI = '${process.env.CI}'`); // Added this to check CI flag
+  // --- DEBUG LOGS (CHANGED TO console.log) ---
+  console.log(`DEBUG_HOOKS: Before hook started for scenario: "${scenarioName}"`);
+  console.log(`DEBUG_HOOKS: process.env.API_BASE_URL = '${process.env.API_BASE_URL}'`);
+  console.log(`DEBUG_HOOKS: process.env.API_KEY = '${process.env.API_KEY}'`);
+  console.log(`DEBUG_HOOKS: process.env.BASE_URL = '${process.env.BASE_URL}'`);
+  console.log(`DEBUG_HOOKS: process.env.CI = '${process.env.CI}'`);
   // --- END DEBUG LOGS ---
 
   const apiBaseUrl = process.env.API_BASE_URL;
   const apiKey = process.env.API_KEY;
 
-  // --- TEMPORARILY COMMENT THIS BLOCK OUT ---
+  // --- TEMPORARILY COMMENT THIS BLOCK OUT (from previous step) ---
   // if (!apiBaseUrl) {
   //   throw new Error('Environment variable API_BASE_URL is not set. Please ensure your .env file is correctly configured or provide it via command line.');
   // }
   // --- END TEMPORARY COMMENT OUT ---
 
-  // --- FIX FOR TYPESCRIPT ERROR (MODIFIED LINE) ---
   const requestOptions: { baseURL: string; extraHTTPHeaders?: { [key: string]: string }; } = {
     baseURL: apiBaseUrl || '', // Provide an empty string fallback
   };
-  // --- END FIX ---
 
   if (apiKey) {
     requestOptions.extraHTTPHeaders = {
@@ -65,16 +64,14 @@ Before(async function (this: CustomWorld, scenario) {
     };
   }
 
-  // This line might still throw a Playwright error if baseURL is truly empty,
-  // but it will allow the code to compile and the debug logs to print.
   this.apiContext = await request.newContext(requestOptions);
   this.apiBaseUrl = apiBaseUrl;
-  Log.info(`API Context created with base URL: ${this.apiBaseUrl}`);
+  // If you want to keep the custom logger for other info, you can do: Log.info(`API Context created with base URL: ${this.apiBaseUrl}`);
 
   const isUiTest = process.env.TEST_ENV === 'ui' || scenario.pickle.tags.some(t => t.name === '@ui-test');
 
   if (isUiTest) {
-    Log.info('Launching a NEW browser instance and context for UI test...');
+    // If you want to keep the custom logger for other info, you can do: Log.info('Launching a NEW browser instance and context for UI test...');
 
     const uiBaseUrl = process.env.BASE_URL;
     if (!uiBaseUrl) {
@@ -98,10 +95,10 @@ Before(async function (this: CustomWorld, scenario) {
     this.checkoutCompletePage = new CheckoutCompletePage(this.page);
     this.cartPage = new CartPage(this.page);
 
-    Log.info('Browser context and page created for UI test.');
+    // If you want to keep the custom logger for other info, you can do: Log.info('Browser context and page created for UI test.');
 
   } else {
-    Log.info('Skipping browser context launch for API test.');
+    // If you want to keep the custom logger for other info, you can do: Log.info('Skipping browser context launch for API test.');
   }
 });
 
@@ -122,12 +119,12 @@ After(async function (this: CustomWorld, scenario) {
         if (!this.page.isClosed()) {
             await this.page.screenshot({ path: screenshotPath });
             this.attach(fs.readFileSync(screenshotPath), 'image/png');
-            Log.info(`📸 Screenshot saved and attached: ${screenshotPath}`);
+            // Log.info(`📸 Screenshot saved and attached: ${screenshotPath}`);
         } else {
-            Log.info(`Page already closed, skipping screenshot for "${scenarioName}".`);
+            // Log.info(`Page already closed, skipping screenshot for "${scenarioName}".`);
         }
       } catch (e) {
-        Log.error(`Failed to take screenshot for scenario "${scenarioName}": ${e}`);
+        // Log.error(`Failed to take screenshot for scenario "${scenarioName}": ${e}`);
       }
     }
 
@@ -138,9 +135,9 @@ After(async function (this: CustomWorld, scenario) {
           fse.ensureDirSync(videoDir);
           const finalVideoPath = path.join(videoDir, `${scenarioName}.webm`);
           await video.saveAs(finalVideoPath);
-          Log.info(`🎥 Video saved: ${finalVideoPath}`);
+          // Log.info(`🎥 Video saved: ${finalVideoPath}`);
         } catch (e) {
-          Log.error(`Failed to save video for scenario "${scenarioName}": ${e}`);
+          // Log.error(`Failed to save video for scenario "${scenarioName}": ${e}`);
         }
       }
     }
@@ -158,8 +155,8 @@ After(async function (this: CustomWorld, scenario) {
 
   if (this.apiContext) {
     await this.apiContext.dispose();
-    Log.info('API context disposed.');
+    // Log.info('API context disposed.');
   }
 
-  Log.testEnd(scenarioName, status);
+  // Log.testEnd(scenarioName, status);
 });
