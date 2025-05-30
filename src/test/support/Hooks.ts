@@ -18,7 +18,6 @@ dotenv.config();
 // ====================================================================
 // GLOBAL CONFIGURATION
 // ====================================================================
-
 setDefaultTimeout(30 * 1000);
 
 const testType = process.env.TEST_ENV || 'ui';
@@ -28,30 +27,22 @@ const videoDir = `test-results/${testType}/videos`;
 // ====================================================================
 // BEFORE EACH SCENARIO HOOK
 // ====================================================================
-
 Before(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name;
   Log.testBegin(scenarioName);
-  Log.info(`API_BASE_URL in hook = ${process.env.API_BASE_URL}`);
-  if (!process.env.API_BASE_URL) {
-    throw new Error('Environment variable API_BASE_URL is not set');
-  }
 
-  const apiBaseUrl = process.env.API_BASE_URL;
-  if (!apiBaseUrl) {
-    throw new Error(
-      'Environment variable API_BASE_URL is not set. Please ensure your .env file or CI environment provides it.'
-    );
+  // ----------------------
+  // API Context Setup
+  // ----------------------
+  const apiBaseUrl = process.env.API_BASE_URL || 'https://reqres.in';
+  if (!process.env.API_BASE_URL) {
+    Log.warn(`API_BASE_URL not provided, falling back to ${apiBaseUrl}`);
   }
 
   const apiKey = process.env.API_KEY;
-  const requestOptions: {
-    baseURL: string;
-    extraHTTPHeaders?: { [key: string]: string };
-  } = {
+  const requestOptions: { baseURL: string; extraHTTPHeaders?: Record<string, string> } = {
     baseURL: apiBaseUrl,
   };
-
   if (apiKey) {
     requestOptions.extraHTTPHeaders = { 'x-api-key': apiKey };
   }
@@ -60,6 +51,9 @@ Before(async function (this: CustomWorld, scenario) {
   this.apiBaseUrl = apiBaseUrl;
   Log.info(`API Context created with base URL: ${this.apiBaseUrl}`);
 
+  // ----------------------
+  // UI Context Setup
+  // ----------------------
   const isUiTest =
     process.env.TEST_ENV === 'ui' ||
     scenario.pickle.tags.some((t) => t.name === '@ui-test');
@@ -67,18 +61,15 @@ Before(async function (this: CustomWorld, scenario) {
   if (isUiTest) {
     Log.info('Launching a NEW browser instance and context for UI test...');
 
-    const uiBaseUrl = process.env.BASE_URL;
-    if (!uiBaseUrl) {
-      throw new Error(
-        'Environment variable BASE_URL is not set for UI tests. Please ensure your .env file or CI environment provides it.'
-      );
+    const uiBaseUrl = process.env.BASE_URL || 'https://www.saucedemo.com';
+    if (!process.env.BASE_URL) {
+      Log.warn(`BASE_URL not provided, falling back to ${uiBaseUrl}`);
     }
 
     const browserInstance: Browser = await chromium.launch();
     this.context = await browserInstance.newContext({
       baseURL: uiBaseUrl,
-      recordVideo:
-        process.env.RECORD_VIDEO === 'true' ? { dir: videoDir } : undefined,
+      recordVideo: process.env.RECORD_VIDEO === 'true' ? { dir: videoDir } : undefined,
     });
 
     this.page = await this.context.newPage();
@@ -98,7 +89,6 @@ Before(async function (this: CustomWorld, scenario) {
 // ====================================================================
 // AFTER EACH SCENARIO HOOK
 // ====================================================================
-
 After(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name.replace(/\s+/g, '_').toLowerCase();
   const status = scenario.result?.status || 'UNKNOWN';
@@ -114,14 +104,10 @@ After(async function (this: CustomWorld, scenario) {
           this.attach(fs.readFileSync(screenshotPath), 'image/png');
           Log.info(`Screenshot saved and attached: ${screenshotPath}`);
         } else {
-          Log.info(
-            `Page already closed, skipping screenshot for "${scenarioName}".`
-          );
+          Log.info(`Page already closed, skipping screenshot for "${scenarioName}".`);
         }
       } catch (e) {
-        Log.error(
-          `Failed to take screenshot for scenario "${scenarioName}": ${e}`
-        );
+        Log.error(`Failed to take screenshot for scenario "${scenarioName}": ${e}`);
       }
     }
 
@@ -134,9 +120,7 @@ After(async function (this: CustomWorld, scenario) {
           await video.saveAs(finalVideoPath);
           Log.info(`🎥 Video saved: ${finalVideoPath}`);
         } catch (e) {
-          Log.error(
-            `Failed to save video for scenario "${scenarioName}": ${e}`
-          );
+          Log.error(`Failed to save video for scenario "${scenarioName}": ${e}`);
         }
       }
     }
