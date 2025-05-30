@@ -13,10 +13,12 @@ import path from 'path';
 import Log from '../utils/Logger';
 import dotenv from 'dotenv';
 
+
 dotenv.config({
-  path: process.env.TEST_ENV ? `.env.${process.env.TEST_ENV}` : '.env',
-  override: !!process.env.TEST_ENV,
+  path: process.env.CI ? './.env.ci' : (process.env.TEST_ENV ? `.env.${process.env.TEST_ENV}` : '.env'),
+  override: !!process.env.TEST_ENV, 
 });
+
 
 // ====================================================================
 // GLOBAL CONFIGURATION
@@ -24,7 +26,7 @@ dotenv.config({
 
 setDefaultTimeout(30 * 1000);
 
-const testType = process.env.TEST_ENV || 'ui';
+const testType = process.env.TEST_ENV || 'ui'; 
 const screenshotDir = `test-results/${testType}/screenshots`;
 const videoDir = `test-results/${testType}/videos`;
 
@@ -36,12 +38,12 @@ Before(async function (this: CustomWorld, scenario) {
   const scenarioName = scenario.pickle.name;
   Log.testBegin(scenarioName);
 
-  // --- ADD THESE DEBUG LOGS ---
+  
   Log.info(`DEBUG_HOOKS: Before hook started for scenario: "${scenarioName}"`);
   Log.info(`DEBUG_HOOKS: process.env.API_BASE_URL = '${process.env.API_BASE_URL}'`);
   Log.info(`DEBUG_HOOKS: process.env.API_KEY = '${process.env.API_KEY}'`);
   Log.info(`DEBUG_HOOKS: process.env.BASE_URL = '${process.env.BASE_URL}'`);
-  // --- END DEBUG LOGS ---
+
 
   const apiBaseUrl = process.env.API_BASE_URL;
   const apiKey = process.env.API_KEY;
