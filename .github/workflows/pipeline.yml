@@ -1,4 +1,4 @@
-
+# .github/workflows/pipeline.yml
 
 name: E2E Tests CI/CD (UI & API)
 
@@ -11,11 +11,11 @@ on:
       - main
 
 jobs:
-  # Job for UI Tests
+  # Job for UI Tests (no changes to this part)
   ui_tests:
     name: Run UI Tests
     runs-on: ubuntu-latest
-    env: 
+    env:
       BASE_URL: ${{ secrets.BASE_URL }}
       RECORD_VIDEO: 'false'
       HEADLESS: 'true'
@@ -56,7 +56,6 @@ jobs:
   api_tests:
     name: Run API Tests
     runs-on: ubuntu-latest
-    
 
     steps:
       - name: Checkout Repository
@@ -70,20 +69,22 @@ jobs:
       - name: Install NPM Dependencies
         run: npm ci
 
-      - name: Create CI Environment File 
-        env: 
+      - name: Create CI Environment File
+        env:
           API_BASE_URL_SECRET: ${{ secrets.API_BASE_URL }}
           API_KEY_SECRET: ${{ secrets.API_KEY }}
         run: |
           echo "DEBUG: Creating .env.ci file..."
           echo "API_BASE_URL=$API_BASE_URL_SECRET" > ./.env.ci
           echo "API_KEY=$API_KEY_SECRET" >> ./.env.ci
-          echo "CI=true" >> ./.env.ci # Add a flag to indicate CI environment
+          echo "CI=true" >> ./.env.ci
           echo "DEBUG: Content of .env.ci (secrets masked):"
-          cat ./.env.ci # This will show the masked content like *** for secrets
+          cat ./.env.ci
+
+      - name: Check Node.js Environment (Direct Test) # NEW STEP ADDED HERE
+        run: node check_env.js
 
       - name: Run Cucumber API Tests
-    
         run: npm run test:api
 
       - name: Upload API JUnit XML Results Artifact
