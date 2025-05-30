@@ -7,16 +7,16 @@ on:
     branches: [ main ]
 
 jobs:
-  # -----------------------------
-  # UI Tests
-  # -----------------------------
+  # -------------------------------------------------------------------
+  # UI TESTS
+  # -------------------------------------------------------------------
   ui_tests:
     name: Run UI Tests
     runs-on: ubuntu-latest
 
     
     env:
-      BASE_URL:    ${{ secrets.BASE_URL }}
+      BASE_URL:     ${{ secrets.BASE_URL }}
       RECORD_VIDEO: 'false'
       HEADLESS:     'true'
       CI:           'true'
@@ -37,7 +37,6 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      
       - name: Print BASE_URL (masked)
         run: echo "BASE_URL=$BASE_URL"
 
@@ -58,9 +57,9 @@ jobs:
           files: test-results/junit/results-ui.xml
           name: UI Test Results
 
-  # -----------------------------
-  # API Tests
-  # -----------------------------
+  # -------------------------------------------------------------------
+  # API TESTS
+  # -------------------------------------------------------------------
   api_tests:
     name: Run API Tests
     runs-on: ubuntu-latest
@@ -83,7 +82,6 @@ jobs:
       - name: Install NPM Dependencies
         run: npm ci
 
-      
       - name: Print API Base URL (masked)
         run: echo "API_BASE_URL=$API_BASE_URL"
 
