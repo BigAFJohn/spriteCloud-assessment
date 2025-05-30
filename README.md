@@ -123,6 +123,9 @@ After execution, JUnit XML reports will be generated in `test-results/junit/`.
 
 ## 4. Project Structure
 
+The key directories and files are organized as follows:
+
+.
 ├── .github/                     # GitHub Actions workflows
 │   └── workflows/
 │       └── pipeline.yml         # CI/CD pipeline definition
@@ -132,7 +135,7 @@ After execution, JUnit XML reports will be generated in `test-results/junit/`.
 │       │   ├── hooks.ts         # Cucumber Before/After hooks, browser/context setup
 │       │   ├── world.ts         # Custom Cucumber World definition
 │       │   ├── CustomWorld.ts   # Custom World interface for TypeScript
-│       │        
+│       │   └── Logger.ts        # Utility for logging
 │       ├── stepdefinitions/     # Cucumber step definitions
 │       │   ├── api_steps/       # API-specific step definitions
 │       │   └── ui_steps/        # UI-specific step definitions
@@ -146,14 +149,14 @@ After execution, JUnit XML reports will be generated in `test-results/junit/`.
 │       │   └── ProductListPage.ts
 │       └── utils/               # General utility functions
 │           ├── Logger.ts        # Utility for logging
-│               
+│           └── assertions.ts    # Custom assertion helpers
 ├── resources/
 │   └── features/                # Gherkin feature files
 │       ├── api_features/        # API test feature files
 │       └── ui_features/         # UI test feature files
 ├── .env                         # Environment variables (local)
 ├── cucumber.js                  # Cucumber.js configuration for profiles
-├── playwright.config.ts         # Playwright configuration
+├── playwright.config.ts         # Playwright configuration (timeouts, reporters, browser settings)
 ├── package.json                 # Project dependencies and scripts
 └── tsconfig.json                # TypeScript configuration
 ## 5. CI/CD Pipeline (GitHub Actions)
